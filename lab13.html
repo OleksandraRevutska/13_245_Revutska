@@ -1,0 +1,710 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Metal Motion</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.95), transparent 28%),
+        radial-gradient(circle at 80% 10%, rgba(210,210,210,0.6), transparent 24%),
+        linear-gradient(135deg, #f7f7f7, #d9d9d9, #f2f2f2);
+      color: #111;
+      overflow-x: hidden;
+    }
+
+    header {
+      width: 100%;
+      padding: 24px 8%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      background: rgba(245,245,245,0.65);
+      border-bottom: 1px solid rgba(255,255,255,0.5);
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      cursor: pointer;
+    }
+
+    nav {
+      display: flex;
+      gap: 28px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      align-items: center;
+    }
+
+    nav a, .cart-btn, .menu-btn {
+      text-decoration: none;
+      color: #222;
+      opacity: 0.75;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+    }
+
+    nav a:hover, .cart-btn:hover {
+      opacity: 1;
+    }
+
+    .menu-btn {
+      display: none;
+      font-size: 22px;
+    }
+
+    .hero {
+      min-height: calc(100vh - 82px);
+      padding: 60px 8% 90px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.45);
+      border: 1px solid rgba(255,255,255,0.75);
+      box-shadow: inset 0 1px 3px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.08);
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      font-size: clamp(52px, 10vw, 140px);
+      line-height: 0.9;
+      letter-spacing: -6px;
+      text-transform: uppercase;
+      background: linear-gradient(120deg, #111, #777, #f8f8f8, #555, #111);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 18px 45px rgba(0,0,0,0.12);
+      margin-bottom: 28px;
+    }
+
+    .subtitle {
+      max-width: 590px;
+      margin: 0 auto 44px;
+      font-size: 18px;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 70px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 15px 28px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      transition: 0.25s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #111, #444, #111);
+      color: white;
+      box-shadow: 0 18px 35px rgba(0,0,0,0.25);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.45);
+      color: #111;
+      border: 1px solid rgba(255,255,255,0.8);
+      box-shadow: inset 0 1px 3px rgba(255,255,255,0.8), 0 15px 30px rgba(0,0,0,0.08);
+    }
+
+    .bubbles {
+      width: min(920px, 100%);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+      margin: 0 auto;
+    }
+
+    .bubble {
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      position: relative;
+      background: radial-gradient(circle at 30% 25%, #ffffff, #eeeeee 18%, #bdbdbd 50%, #737373 100%);
+      box-shadow: inset -18px -18px 35px rgba(0,0,0,0.2), inset 18px 18px 35px rgba(255,255,255,0.7), 0 22px 45px rgba(0,0,0,0.18);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      border: none;
+      cursor: pointer;
+    }
+
+    .bubble:hover {
+      transform: translateY(-10px) scale(1.03);
+    }
+
+    .bubble span {
+      z-index: 1;
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 800;
+      color: #111;
+    }
+
+    .bottom-text {
+      margin-top: 56px;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #555;
+    }
+
+    section.content-section {
+      padding: 90px 8%;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: clamp(34px, 6vw, 72px);
+      text-transform: uppercase;
+      letter-spacing: -3px;
+      margin-bottom: 18px;
+    }
+
+    .section-subtitle {
+      max-width: 620px;
+      margin: 0 auto 45px;
+      text-align: center;
+      color: #444;
+      line-height: 1.6;
+    }
+
+    .filters {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 36px;
+    }
+
+    .filter-btn {
+      padding: 11px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.8);
+      background: rgba(255,255,255,0.45);
+      cursor: pointer;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .filter-btn.active {
+      background: #111;
+      color: white;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 24px;
+    }
+
+    .product-card {
+      border-radius: 28px;
+      background: rgba(255,255,255,0.42);
+      border: 1px solid rgba(255,255,255,0.8);
+      box-shadow: 0 20px 45px rgba(0,0,0,0.1);
+      padding: 22px;
+      text-align: center;
+      transition: 0.25s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-8px);
+    }
+
+    .product-image {
+      height: 220px;
+      border-radius: 24px;
+      overflow: hidden;
+      margin-bottom: 18px;
+      background: #ddd;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .product-card h3 {
+      font-size: 19px;
+      margin-bottom: 9px;
+    }
+
+    .product-card p {
+      color: #555;
+      line-height: 1.45;
+      margin-bottom: 14px;
+    }
+
+    .price {
+      display: block;
+      font-size: 22px;
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
+
+    .about-box, .contact-box, .cart-panel {
+      max-width: 900px;
+      margin: auto;
+      border-radius: 32px;
+      background: rgba(255,255,255,0.45);
+      border: 1px solid rgba(255,255,255,0.85);
+      box-shadow: 0 22px 50px rgba(0,0,0,0.1);
+      padding: 34px;
+      line-height: 1.7;
+    }
+
+    .contact-box {
+      display: grid;
+      gap: 14px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 15px 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(0,0,0,0.1);
+      background: rgba(255,255,255,0.65);
+      outline: none;
+      font-size: 15px;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .cart-panel {
+      display: none;
+      margin-top: 28px;
+    }
+
+    .cart-panel.show {
+      display: block;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .remove-btn {
+      border: none;
+      background: #111;
+      color: white;
+      padding: 7px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      background: #111;
+      color: white;
+      padding: 14px 20px;
+      border-radius: 999px;
+      box-shadow: 0 18px 35px rgba(0,0,0,0.25);
+      transform: translateY(120px);
+      transition: 0.25s ease;
+      z-index: 50;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+    }
+
+    footer {
+      padding: 28px 8%;
+      text-align: center;
+      color: #555;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    @media (max-width: 760px) {
+      header {
+        padding: 20px 6%;
+      }
+
+      .menu-btn {
+        display: block;
+      }
+
+      nav {
+        position: absolute;
+        top: 70px;
+        left: 6%;
+        right: 6%;
+        flex-direction: column;
+        padding: 24px;
+        border-radius: 24px;
+        background: rgba(255,255,255,0.92);
+        box-shadow: 0 20px 45px rgba(0,0,0,0.16);
+        display: none;
+      }
+
+      nav.open {
+        display: flex;
+      }
+
+      h1 {
+        letter-spacing: -3px;
+      }
+
+      .bubbles {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo" onclick="goToSection('home')">METAL MOTION</div>
+
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+
+    <nav id="navMenu">
+      <a href="#shop">Shop</a>
+      <a href="#collections">Collections</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <button class="cart-btn" onclick="toggleCart()">Cart (<span id="cartCount">0</span>)</button>
+    </nav>
+  </header>
+
+  <main class="hero" id="home">
+    <section>
+      <div class="tag">Minimal Performance Wear</div>
+
+      <h1>Move<br>In Metal</h1>
+
+      <p class="subtitle">
+        Clean, strong and futuristic activewear for climbing, gym, running and cycling.
+      </p>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="goToSection('shop')">Shop Now</button>
+        <button class="btn btn-secondary" onclick="goToSection('collections')">View Collections</button>
+      </div>
+
+      <div class="bubbles" id="collections">
+        <button class="bubble" onclick="filterProducts('climbing')"><span>Climbing</span></button>
+        <button class="bubble" onclick="filterProducts('gym')"><span>Gym</span></button>
+        <button class="bubble" onclick="filterProducts('running')"><span>Running</span></button>
+        <button class="bubble" onclick="filterProducts('cycling')"><span>Cycling</span></button>
+      </div>
+
+      <p class="bottom-text">Silver · Chrome · Graphite · Motion</p>
+    </section>
+  </main>
+
+  <section class="content-section" id="shop">
+    <h2 class="section-title">Shop Collection</h2>
+
+    <p class="section-subtitle">
+      Choose your category and add items to the cart. Everything works directly inside this one HTML file.
+    </p>
+
+    <div class="filters">
+      <button class="filter-btn active" onclick="filterProducts('all')">All</button>
+      <button class="filter-btn" onclick="filterProducts('climbing')">Climbing</button>
+      <button class="filter-btn" onclick="filterProducts('gym')">Gym</button>
+      <button class="filter-btn" onclick="filterProducts('running')">Running</button>
+      <button class="filter-btn" onclick="filterProducts('cycling')">Cycling</button>
+    </div>
+
+    <div class="products" id="products"></div>
+
+    <div class="cart-panel" id="cartPanel">
+      <h2>Your Cart</h2>
+      <div id="cartItems"></div>
+      <h3 id="cartTotal">Total: $0</h3>
+      <br>
+      <button class="btn btn-primary" onclick="checkout()">Checkout</button>
+    </div>
+  </section>
+
+  <section class="content-section" id="about">
+    <h2 class="section-title">About Metal Motion</h2>
+
+    <div class="about-box">
+      <p>
+        Metal Motion is a futuristic activewear brand inspired by silver, chrome and movement.
+        The collection is made for people who train, climb, run, cycle and want to look stylish every day.
+      </p>
+    </div>
+  </section>
+
+  <section class="content-section" id="contact">
+    <h2 class="section-title">Contact Us</h2>
+
+    <form class="contact-box" onsubmit="sendMessage(event)">
+      <input type="text" id="name" placeholder="Your name" required>
+      <input type="email" id="email" placeholder="Your email" required>
+      <textarea id="message" placeholder="Your message" required></textarea>
+      <button class="btn btn-primary" type="submit">Send Message</button>
+    </form>
+  </section>
+
+  <footer>
+    © 2026 Metal Motion · Sport · Style · Performance
+  </footer>
+
+  <div class="toast" id="toast">Added to cart</div>
+
+  <script>
+    const products = [
+      {
+        name: "Chrome Climbing Top",
+        category: "climbing",
+        price: 49,
+        image: "https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&w=800&q=80",
+        description: "Flexible top for climbing and active days."
+      },
+      {
+        name: "Grip Motion Leggings",
+        category: "climbing",
+        price: 59,
+        image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=80",
+        description: "High-waist leggings with strong support."
+      },
+      {
+        name: "Graphite Gym Hoodie",
+        category: "gym",
+        price: 79,
+        image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=800&q=80",
+        description: "Oversized hoodie with metallic streetwear style."
+      },
+      {
+        name: "Silver Training Set",
+        category: "gym",
+        price: 89,
+        image: "https://images.unsplash.com/photo-1518310383802-640c2de311b2?auto=format&fit=crop&w=800&q=80",
+        description: "Minimal set for gym and everyday outfits."
+      },
+      {
+        name: "Runner Air Jacket",
+        category: "running",
+        price: 69,
+        image: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=800&q=80",
+        description: "Lightweight jacket for cool runs."
+      },
+      {
+        name: "Metal Sprint Shorts",
+        category: "running",
+        price: 39,
+        image: "https://images.unsplash.com/photo-1502904550040-7534597429ae?auto=format&fit=crop&w=800&q=80",
+        description: "Comfortable shorts for running and training."
+      },
+      {
+        name: "Cycling Chrome Jersey",
+        category: "cycling",
+        price: 74,
+        image: "https://images.unsplash.com/photo-1541625602330-2277a4c46182?auto=format&fit=crop&w=800&q=80",
+        description: "Breathable jersey with futuristic finish."
+      },
+      {
+        name: "Aero Silver Gloves",
+        category: "cycling",
+        price: 29,
+        image: "https://images.unsplash.com/photo-1509395176047-4a66953fd231?auto=format&fit=crop&w=800&q=80",
+        description: "Soft gloves for comfort and grip."
+      }
+    ];
+
+    let cart = [];
+
+    function goToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+      document.getElementById("navMenu").classList.remove("open");
+    }
+
+    function toggleMenu() {
+      document.getElementById("navMenu").classList.toggle("open");
+    }
+
+    function renderProducts(list = products) {
+      const container = document.getElementById("products");
+      container.innerHTML = "";
+
+      list.forEach((product) => {
+        const card = document.createElement("div");
+        card.className = "product-card";
+
+        card.innerHTML = `
+          <div class="product-image">
+            <img src="${product.image}" alt="${product.name}">
+          </div>
+          <h3>${product.name}</h3>
+          <p>${product.description}</p>
+          <span class="price">$${product.price}</span>
+          <button class="btn btn-primary" onclick="addToCart('${product.name}')">Add to Cart</button>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function filterProducts(category) {
+      const buttons = document.querySelectorAll(".filter-btn");
+
+      buttons.forEach(btn => btn.classList.remove("active"));
+
+      buttons.forEach(btn => {
+        if (
+          btn.textContent.toLowerCase() === category ||
+          (category === "all" && btn.textContent.toLowerCase() === "all")
+        ) {
+          btn.classList.add("active");
+        }
+      });
+
+      const filtered = category === "all"
+        ? products
+        : products.filter(item => item.category === category);
+
+      renderProducts(filtered);
+      goToSection("shop");
+    }
+
+    function addToCart(productName) {
+      const product = products.find(item => item.name === productName);
+      cart.push(product);
+      updateCart();
+      showToast(`${product.name} added to cart`);
+    }
+
+    function updateCart() {
+      document.getElementById("cartCount").textContent = cart.length;
+
+      const cartItems = document.getElementById("cartItems");
+      cartItems.innerHTML = "";
+
+      if (cart.length === 0) {
+        cartItems.innerHTML = "<p>Your cart is empty.</p>";
+      }
+
+      cart.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "cart-item";
+
+        div.innerHTML = `
+          <span>${item.name} — $${item.price}</span>
+          <button class="remove-btn" onclick="removeFromCart(${index})">Remove</button>
+        `;
+
+        cartItems.appendChild(div);
+      });
+
+      const total = cart.reduce((sum, item) => sum + item.price, 0);
+      document.getElementById("cartTotal").textContent = `Total: $${total}`;
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      updateCart();
+      showToast("Item removed");
+    }
+
+    function toggleCart() {
+      const panel = document.getElementById("cartPanel");
+      panel.classList.toggle("show");
+      goToSection("shop");
+    }
+
+    function checkout() {
+      if (cart.length === 0) {
+        showToast("Your cart is empty");
+        return;
+      }
+
+      showToast("Order created successfully");
+      cart = [];
+      updateCart();
+    }
+
+    function sendMessage(event) {
+      event.preventDefault();
+
+      const name = document.getElementById("name").value;
+
+      showToast(`Thank you, ${name}! Message sent`);
+      event.target.reset();
+    }
+
+    function showToast(text) {
+      const toast = document.getElementById("toast");
+
+      toast.textContent = text;
+      toast.classList.add("show");
+
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2200);
+    }
+
+    renderProducts();
+    updateCart();
+  </script>
+</body>
+</html>
+```
